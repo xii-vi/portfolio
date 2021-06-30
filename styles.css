@@ -160,8 +160,11 @@ hr {
 }
 
 .icon {
-
+    display: block;
     background-image: "images/insta.svg";
+    background-image: "images/github.svg";
+    background-image: "images/twitter.svg";
+    background-image: "images/linkedin.svg";
 }
 
 .br {
@@ -192,8 +195,35 @@ hr {
 }
 
 .icon-img {
- 
+
     text-align: left;
     margin: auto;
-    width: 50px; 
+    width: 50px;
+}
+
+.fa {
+    padding: 20px;
+    width: 30px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 50%;
+    margin: auto;
+    display: inline-block;
+}
+
+.fa-insta {
+    color: white;
+}
+
+
+.fa-github {
+    color: white;
+}
+
+.fa-linkedin {
+    color: white;
+}
+
+.fa-twitter {
+    color: white;
 }
