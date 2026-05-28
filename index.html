@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>रोहित अभिषेक // Sentinel Data</title>
+    <title>Rohit Abhishek | रोहित अभिषेक</title>
 
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80' fill='%23ffffff' font-family='sans-serif'>XII</text></svg>">
@@ -27,7 +27,8 @@
             background-color: var(--bg);
             color: var(--fg);
             font-family: var(--font);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -39,17 +40,13 @@
             height: 100vh;
             z-index: 1;
             pointer-events: none;
-            /* Let mouse interact with DOM, JS handles canvas mouse */
         }
 
-        /* * Editorial Brutalist UI 
-         * mix-blend-mode: difference forces the text to invert over the WebGL fluid 
-         */
         .ui-layer {
             position: relative;
             z-index: 10;
             width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: space-between;
             padding: 2.5vw;
@@ -61,7 +58,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 40%;
+            width: 45%;
         }
 
         .right-col {
@@ -69,7 +66,7 @@
             flex-direction: column;
             justify-content: flex-end;
             align-items: flex-end;
-            width: 40%;
+            width: 45%;
             pointer-events: auto;
         }
 
@@ -81,10 +78,20 @@
             font-weight: 700;
         }
 
+        .hindi-name {
+            font-size: 4.8vw;
+            line-height: 1.2;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--fg);
+        }
+
         .bio {
             font-size: 1.2vw;
             line-height: 1.4;
-            max-width: 80%;
+            max-width: 90%;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             font-weight: 500;
@@ -145,6 +152,7 @@
             justify-content: space-between;
             width: 100%;
             pointer-events: auto;
+            margin-bottom: 2rem;
         }
 
         a {
@@ -154,6 +162,79 @@
 
         a:hover {
             text-decoration: underline;
+        }
+
+        /* ==========================================
+         * Mobile Responsive Breakpoint
+         * ========================================== */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: scroll;
+                /* Allows scrolling through text elements */
+            }
+
+            .ui-layer {
+                flex-direction: column;
+                justify-content: flex-start;
+                gap: 5rem;
+                padding: 6vw;
+                height: auto;
+            }
+
+            .left-col,
+            .right-col {
+                width: 100%;
+            }
+
+            .right-col {
+                align-items: flex-start;
+                margin-bottom: 4rem;
+            }
+
+            h1 {
+                font-size: 14vw;
+            }
+
+            .hindi-name {
+                font-size: 9vw;
+                margin-bottom: 2rem;
+            }
+
+            .bio {
+                font-size: 3.8vw;
+                max-width: 100%;
+            }
+
+            .poetry {
+                font-size: 3.2vw;
+                margin-top: 1.5rem;
+            }
+
+            .header-meta {
+                font-size: 3.5vw;
+            }
+
+            .project-list {
+                text-align: left;
+            }
+
+            .project-item {
+                padding: 1.2rem 0;
+            }
+
+            .project-item:hover {
+                padding-right: 0;
+                padding-left: 1rem;
+                /* Invert interaction direction for mobile */
+            }
+
+            .project-name {
+                font-size: 5.5vw;
+            }
+
+            .project-desc {
+                font-size: 3vw;
+            }
         }
     </style>
 </head>
@@ -166,12 +247,13 @@
 
         <div class="left-col">
             <div class="header-meta">
-                <span>XII VI</span>
+                <span>XII VI // ARCHIVE</span>
                 <a href="https://github.com/xii-vi" target="_blank">GITHUB ↗</a>
             </div>
 
             <div>
                 <h1>Rohit<br>Abhishek</h1>
+
                 <div class="bio">
                     Frontend Developer focusing on structural purity and rapid prototyping. Becoming better day by day.
                 </div>
@@ -226,18 +308,27 @@
                 <span class="project-desc">${proj.desc}</span>
             `;
 
-            // Interaction Events
-            li.addEventListener('mouseenter', () => {
+            // Desktop Hovers / Mobile Taps
+            const activateState = () => {
                 targetColor1.set(proj.color1);
                 targetColor2.set(proj.color2);
                 hoverIntensity = 1.0;
-            });
+            };
 
-            li.addEventListener('mouseleave', () => {
+            const deactivateState = () => {
                 targetColor1.set(defaultColor1);
                 targetColor2.set(defaultColor2);
                 hoverIntensity = 0.0;
-            });
+            };
+
+            li.addEventListener('mouseenter', activateState);
+            li.addEventListener('mouseleave', deactivateState);
+
+            // Mobile touch fallback support
+            li.addEventListener('touchstart', activateState, { passive: true });
+            li.addEventListener('touchend', () => {
+                setTimeout(deactivateState, 1000); // Hold color briefly on mobile touch release
+            }, { passive: true });
 
             li.addEventListener('click', () => {
                 window.open(proj.link, '_blank');
@@ -273,13 +364,11 @@
             varying vec3 vNormal;
             varying vec3 vPosition;
 
-            // Pseudo-random noise function
             vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
             vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
             vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
             vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
 
-            // Continuous noise mathematically generated
             float snoise(vec3 v) {
                 const vec2 C = vec2(1.0/6.0, 1.0/3.0);
                 const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
@@ -325,16 +414,11 @@
 
             void main() {
                 vNormal = normal;
-                
-                // Calculate organic deformation
                 float noise = snoise(vec3(position.x * 1.5, position.y * 1.5, position.z * 1.5 + uTime * 0.5));
-                
-                // Exaggerate noise on hover
                 float deformation = noise * (0.3 + (uHover * 0.4));
                 vec3 newPosition = position + normal * deformation;
                 
-                // Mouse interaction - bend away from cursor
-                vec2 projectedMouse = uMouse * 2.5; // Scale to world space approx
+                vec2 projectedMouse = uMouse * 2.5; 
                 float dist = distance(newPosition.xy, projectedMouse);
                 float repel = smoothstep(1.5, 0.0, dist);
                 newPosition.xy += normalize(newPosition.xy - projectedMouse) * repel * 0.5;
@@ -352,16 +436,12 @@
             varying vec3 vPosition;
 
             void main() {
-                // Fake environmental lighting / Iridescence
                 vec3 viewDir = normalize(cameraPosition - vPosition);
                 float fresnel = dot(viewDir, vNormal);
                 fresnel = clamp(1.0 - fresnel, 0.0, 1.0);
-                fresnel = pow(fresnel, 2.0); // Intensity of the rim light
+                fresnel = pow(fresnel, 2.0); 
                 
-                // Gradient based on object height
                 vec3 baseColor = mix(uColor2, uColor1, smoothstep(-1.0, 1.0, vPosition.y));
-                
-                // Add extreme highlight for the "liquid metal" look
                 vec3 finalColor = baseColor + (vec3(1.0) * fresnel * 1.2);
                 
                 gl_FragColor = vec4(finalColor, 1.0);
@@ -372,10 +452,9 @@
             vertexShader,
             fragmentShader,
             uniforms,
-            wireframe: false // Set to true if you want a pure tech/grid look
+            wireframe: false
         });
 
-        // Use an Icosahedron with extremely high detail to allow for smooth liquid deformation
         const geometry = new THREE.IcosahedronGeometry(1.5, 64);
         const mesh = new THREE.Mesh(geometry, material);
         scene.add(mesh);
@@ -384,15 +463,19 @@
         const clock = new THREE.Clock();
         const mouse = new THREE.Vector2(0, 0);
 
-        window.addEventListener('mousemove', (e) => {
-            // Normalize mouse to -1 to +1
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-            // Send to shader
-            // Lerp mouse for smooth following
+        // Tracker for coordinates (Supports Touch + Desktop mouse)
+        const updateCoordinates = (clientX, clientY) => {
+            mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(clientY / window.innerHeight) * 2 + 1;
             uniforms.uMouse.value.lerp(mouse, 0.1);
-        });
+        };
+
+        window.addEventListener('mousemove', (e) => updateCoordinates(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                updateCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
 
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -406,12 +489,10 @@
             const elapsedTime = clock.getElapsedTime();
             uniforms.uTime.value = elapsedTime;
 
-            // Smoothly interpolate colors and hover states
             uniforms.uColor1.value.lerp(targetColor1, 0.05);
             uniforms.uColor2.value.lerp(targetColor2, 0.05);
             uniforms.uHover.value += (hoverIntensity - uniforms.uHover.value) * 0.05;
 
-            // Slowly rotate the entire blob
             mesh.rotation.y = elapsedTime * 0.1;
             mesh.rotation.x = elapsedTime * 0.05;
 
